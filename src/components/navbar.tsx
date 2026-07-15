@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const navLinks = [
-  { href: "/home", label: "Home" },
+  { href: "/", label: "Home" },
   { href: "/tiers", label: "Partnership Tiers" },
   { href: "/testimonies", label: "Testimonies" },
   { href: "/gallery", label: "Gallery" },
@@ -11,7 +11,7 @@ export function Navbar() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur-sm">
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/home" className="text-lg font-bold tracking-tight">
+        <Link href="/" className="text-lg font-bold tracking-tight">
           My Ultimate Worship
         </Link>
 

@@ -15,7 +15,7 @@ export default function ThankYouPage() {
         nations.
       </p>
       <Link
-        href="/home"
+        href="/"
         className="rounded-lg bg-amber-500 px-8 py-3 font-semibold text-slate-900 transition hover:bg-amber-400"
       >
         Back to Home
