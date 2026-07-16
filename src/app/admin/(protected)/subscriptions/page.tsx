@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
-import { subscriptions } from "../../../../drizzle/schema/subscriptions";
-import { partners } from "../../../../drizzle/schema/partners";
+import { subscriptions } from "../../../../../drizzle/schema/subscriptions";
+import { partners } from "../../../../../drizzle/schema/partners";
 import { desc, eq } from "drizzle-orm";
 import { formatDate, formatCurrency } from "@/lib/utils";
 
