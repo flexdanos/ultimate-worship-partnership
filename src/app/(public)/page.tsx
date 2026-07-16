@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Home | My Ultimate Worship",
+  title: "My Ultimate Worship",
   description:
     "Welcome to My Ultimate Worship — a ministry dedicated to lifting hearts through praise.",
 };

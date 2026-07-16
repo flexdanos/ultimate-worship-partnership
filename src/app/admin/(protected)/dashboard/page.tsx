@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
-import { partners } from "../../../../drizzle/schema/partners";
-import { subscriptions } from "../../../../drizzle/schema/subscriptions";
-import { paymentEvents } from "../../../../drizzle/schema/payment-events";
-import { count, eq, gte, sql } from "drizzle-orm";
+import { partners } from "../../../../../drizzle/schema/partners";
+import { subscriptions } from "../../../../../drizzle/schema/subscriptions";
+import { paymentEvents } from "../../../../../drizzle/schema/payment-events";
+import { and, count, eq, gte, sql } from "drizzle-orm";
 import { formatCurrency } from "@/lib/utils";
 
 export const metadata = { title: "Dashboard | Admin" };
@@ -30,7 +30,10 @@ async function getStats() {
       .select({ total: sql<number>`coalesce(sum(amount_cents), 0)` })
       .from(paymentEvents)
       .where(
-        sql`event_type = 'renewal_succeeded' AND occurred_at >= ${thirtyDaysAgo}`
+        and(
+          eq(paymentEvents.eventType, "renewal_succeeded"),
+          gte(paymentEvents.occurredAt, thirtyDaysAgo)
+        )
       ),
   ]);
 
