@@ -16,7 +16,7 @@ export function Footer() {
             <p className="mb-3 text-sm font-semibold">Ministry</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link href="/home" className="transition hover:text-foreground">
+                <Link href="/" className="transition hover:text-foreground">
                   Home
                 </Link>
               </li>

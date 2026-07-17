@@ -1,8 +1,8 @@
 import { db } from "@/lib/db";
-import { paymentEvents } from "../../../../drizzle/schema/payment-events";
-import { partners } from "../../../../drizzle/schema/partners";
-import { subscriptions } from "../../../../drizzle/schema/subscriptions";
-import { sql, count, eq } from "drizzle-orm";
+import { paymentEvents } from "../../../../../drizzle/schema/payment-events";
+import { partners } from "../../../../../drizzle/schema/partners";
+import { subscriptions } from "../../../../../drizzle/schema/subscriptions";
+import { sql, count, eq, and, gte } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Reports | Admin" };
@@ -22,7 +22,10 @@ async function getReportData() {
       .select({ total: sql<number>`coalesce(sum(amount_cents), 0)` })
       .from(paymentEvents)
       .where(
-        sql`event_type = 'renewal_succeeded' AND occurred_at >= ${yearStart}`
+        and(
+          eq(paymentEvents.eventType, "renewal_succeeded"),
+          gte(paymentEvents.occurredAt, yearStart)
+        )
       ),
 
     // Revenue by month (current year)
