@@ -1,5 +1,5 @@
 import { db } from "@/lib/db";
-import { partners } from "../../../../drizzle/schema/partners";
+import { partners } from "../../../../../drizzle/schema/partners";
 import { isNotNull } from "drizzle-orm";
 import { formatDate } from "@/lib/utils";
 import { ApproveTestimonyButton } from "./approve-testimony-button";
