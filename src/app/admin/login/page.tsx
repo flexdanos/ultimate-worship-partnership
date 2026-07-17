@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { AdminLoginForm } from "./admin-login-form";
 
 export const metadata = {
@@ -15,7 +16,9 @@ export default function AdminLoginPage() {
           </p>
         </div>
         <div className="rounded-xl border border-slate-800 bg-slate-900 p-8">
-          <AdminLoginForm />
+          <Suspense fallback={null}>
+            <AdminLoginForm />
+          </Suspense>
         </div>
       </div>
     </div>
