@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { PartnerIntakeForm } from "./partner-intake-form";
 
 export const metadata = {
@@ -16,7 +17,9 @@ export default function PartnerFormPage() {
           payment page to complete your partnership.
         </p>
       </div>
-      <PartnerIntakeForm />
+      <Suspense fallback={null}>
+        <PartnerIntakeForm />
+      </Suspense>
     </div>
   );
 }
