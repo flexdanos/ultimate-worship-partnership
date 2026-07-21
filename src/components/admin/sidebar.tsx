@@ -14,6 +14,7 @@ const navItems = [
     label: "Testimonies",
     icon: "💬",
   },
+  { href: "/admin/gallery", label: "Gallery", icon: "🖼️" },
   { href: "/admin/reports", label: "Reports", icon: "📊" },
 ];
 
