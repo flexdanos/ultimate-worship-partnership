@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import { randomUUID } from "crypto";
 
-export const GALLERY_BUCKET = "gallery";
+export const PLEDGE_PROOFS_BUCKET = "pledge-proofs";
 
 let _adminClient: ReturnType<typeof createClient> | undefined;
 
@@ -23,48 +23,56 @@ function getSupabaseAdminClient() {
   return _adminClient;
 }
 
-async function ensureGalleryBucket() {
+async function ensurePledgeProofsBucket() {
   const supabase = getSupabaseAdminClient();
   const { data: buckets, error } = await supabase.storage.listBuckets();
   if (error) throw error;
-  if (buckets.some((bucket) => bucket.name === GALLERY_BUCKET)) return;
+  if (buckets.some((bucket) => bucket.name === PLEDGE_PROOFS_BUCKET)) return;
 
+  // Private bucket — proofs of payment can contain bank/Mobile Money details.
   const { error: createError } = await supabase.storage.createBucket(
-    GALLERY_BUCKET,
-    { public: true }
+    PLEDGE_PROOFS_BUCKET,
+    { public: false }
   );
   if (createError && !createError.message.includes("already exists")) {
     throw createError;
   }
 }
 
-/** Uploads a gallery image to Supabase Storage and returns its storage path. */
-export async function uploadGalleryImage(file: File): Promise<string> {
-  await ensureGalleryBucket();
+/** Uploads a pledge proof-of-payment file and returns its storage path. */
+export async function uploadPledgeProof(file: File): Promise<string> {
+  await ensurePledgeProofsBucket();
   const supabase = getSupabaseAdminClient();
 
   const ext = file.name.split(".").pop();
   const path = ext ? `${randomUUID()}.${ext}` : randomUUID();
 
   const { error } = await supabase.storage
-    .from(GALLERY_BUCKET)
+    .from(PLEDGE_PROOFS_BUCKET)
     .upload(path, file, { contentType: file.type });
 
   if (error) throw error;
   return path;
 }
 
-/** Deletes a gallery image from Supabase Storage. */
-export async function deleteGalleryImage(storagePath: string): Promise<void> {
+/** Deletes a pledge proof-of-payment file from storage. */
+export async function deletePledgeProof(storagePath: string): Promise<void> {
   const supabase = getSupabaseAdminClient();
   const { error } = await supabase.storage
-    .from(GALLERY_BUCKET)
+    .from(PLEDGE_PROOFS_BUCKET)
     .remove([storagePath]);
   if (error) throw error;
 }
 
-/** Builds the public URL for a gallery image's storage path. */
-export function getGalleryPublicUrl(storagePath: string): string {
-  const base = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  return `${base}/storage/v1/object/public/${GALLERY_BUCKET}/${storagePath}`;
+/** Builds a short-lived signed URL for admin review of a proof file. */
+export async function getPledgeProofSignedUrl(
+  storagePath: string,
+  expiresInSeconds = 600
+): Promise<string> {
+  const supabase = getSupabaseAdminClient();
+  const { data, error } = await supabase.storage
+    .from(PLEDGE_PROOFS_BUCKET)
+    .createSignedUrl(storagePath, expiresInSeconds);
+  if (error) throw error;
+  return data.signedUrl;
 }
