@@ -23,12 +23,22 @@ export async function Navbar() {
         <ul className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <li key={link.href}>
-              <Link
-                href={link.href}
-                className="text-sm text-muted-foreground transition hover:text-foreground"
-              >
-                {link.label}
-              </Link>
+              {link.href === "/" ? (
+                <Link
+                  href={link.href}
+                  className="text-sm text-muted-foreground transition hover:text-foreground"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <GatedNavLink
+                  href={link.href}
+                  isAuthenticated={!!user}
+                  className="text-sm text-muted-foreground transition hover:text-foreground"
+                >
+                  {link.label}
+                </GatedNavLink>
+              )}
             </li>
           ))}
           <li>
@@ -47,20 +57,13 @@ export async function Navbar() {
             <UserMenu name={user.name} />
           ) : (
             <GatedNavLink
-              href="/give"
+              href="/"
               isAuthenticated={false}
-              className="text-sm font-medium text-muted-foreground transition hover:text-foreground"
+              className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-amber-400"
             >
-              Sign In
+              Sign In / Sign Up
             </GatedNavLink>
           )}
-
-          <Link
-            href="/partner-form"
-            className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-900 transition hover:bg-amber-400"
-          >
-            Partner With Us
-          </Link>
         </div>
       </nav>
     </header>

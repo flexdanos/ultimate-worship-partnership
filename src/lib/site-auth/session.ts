@@ -1,4 +1,5 @@
 import { randomBytes, createHash } from "crypto";
+import { cache } from "react";
 import { cookies } from "next/headers";
 import { eq, and, gt } from "drizzle-orm";
 import { db } from "@/lib/db";
@@ -35,12 +36,16 @@ export async function createSessionForUser(
  * Returns the signed-in site user for the current request (via the session
  * cookie), or null if there's no valid, unexpired session. Safe to call from
  * Server Components, layouts, and Route Handlers.
+ *
+ * Wrapped in React's `cache()` so the Navbar, Footer, and page component can
+ * all call this in the same request without tripling the DB round trip —
+ * React dedupes concurrent/repeat calls within a single render pass.
  */
-export async function getSessionUser(): Promise<{
+export const getSessionUser = cache(async (): Promise<{
   id: string;
   name: string;
   email: string;
-} | null> {
+} | null> => {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
   if (!token) return null;
@@ -59,7 +64,7 @@ export async function getSessionUser(): Promise<{
     .limit(1);
 
   return rows[0] ?? null;
-}
+});
 
 /** Deletes the session row matching a raw token (used on sign-out). */
 export async function destroySessionByToken(token: string): Promise<void> {

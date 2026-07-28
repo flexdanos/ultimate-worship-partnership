@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { getSessionUser } from "@/lib/site-auth/session";
 import { AuthGate } from "@/components/site-auth/auth-gate";
 import { PledgeForm } from "./pledge-form";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { findPartnerByEmail } from "../partner-form/actions";
+import { TIER_BASE_AMOUNTS } from "@/lib/stripe/tiers";
 
 export const dynamic = "force-dynamic";
 
@@ -11,15 +13,31 @@ export const metadata = {
     "Record a bank transfer or Mobile Money pledge while our online payment setup is finalized.",
 };
 
-export default async function GivePage({
-  searchParams,
-}: {
-  searchParams: { tier?: string };
-}) {
+export default async function GivePage() {
   const user = await getSessionUser();
   if (!user) return <AuthGate />;
 
-  const defaultTier = (searchParams.tier as PartnerTier) ?? "friend_of_worship";
+  const partner = await findPartnerByEmail(user.email);
+
+  if (!partner) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-20 text-center">
+        <h1 className="mb-3 text-3xl font-bold">Become a Partner First</h1>
+        <p className="mb-8 text-muted-foreground">
+          Your pledge is tied to your partnership tier. Fill in your
+          partnership details before recording a gift.
+        </p>
+        <Link
+          href="/partner-form"
+          className="inline-block rounded-lg bg-amber-500 px-6 py-3 font-semibold text-slate-900 transition hover:bg-amber-400"
+        >
+          Become a Partner →
+        </Link>
+      </div>
+    );
+  }
+
+  const defaultAmount = TIER_BASE_AMOUNTS[partner.tier][partner.interval];
 
   return (
     <div className="mx-auto max-w-2xl px-6 py-20">
@@ -30,7 +48,7 @@ export default async function GivePage({
           below. Our team will verify it and mark it as received.
         </p>
       </div>
-      <PledgeForm defaultTier={defaultTier} />
+      <PledgeForm tier={partner.tier} defaultAmount={defaultAmount} />
     </div>
   );
 }

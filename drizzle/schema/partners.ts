@@ -1,4 +1,5 @@
 import { pgTable, text, timestamp, pgEnum, uuid } from "drizzle-orm/pg-core";
+import { billingIntervalEnum } from "./enums";
 
 export const partnerTierEnum = pgEnum("partner_tier", [
   "friend_of_worship",
@@ -21,6 +22,7 @@ export const partners = pgTable("partners", {
   phone: text("phone"),
   country: text("country"),
   tier: partnerTierEnum("tier").notNull().default("friend_of_worship"),
+  interval: billingIntervalEnum("interval").notNull().default("monthly"),
   status: partnerStatusEnum("status").notNull().default("pending"),
 
   // Stripe references

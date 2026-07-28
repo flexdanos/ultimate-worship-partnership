@@ -7,11 +7,7 @@ import {
   uuid,
 } from "drizzle-orm/pg-core";
 import { partners } from "./partners";
-
-export const billingIntervalEnum = pgEnum("billing_interval", [
-  "monthly",
-  "yearly",
-]);
+import { billingIntervalEnum } from "./enums";
 
 export const subscriptionStatusEnum = pgEnum("subscription_status", [
   "active",
