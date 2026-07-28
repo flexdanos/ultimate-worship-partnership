@@ -2,12 +2,14 @@ import Link from "next/link";
 import { getSessionUser } from "@/lib/site-auth/session";
 import { GatedNavLink } from "@/components/site-auth/gated-nav-link";
 import { UserMenu } from "@/components/site-auth/user-menu";
+import { MobileNav } from "@/components/site-auth/mobile-nav";
 
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/tiers", label: "Partnership Tiers" },
   { href: "/testimonies", label: "Testimonies" },
   { href: "/gallery", label: "Gallery" },
+  { href: "/give", label: "Give Now" },
 ];
 
 export async function Navbar() {
@@ -41,15 +43,6 @@ export async function Navbar() {
               )}
             </li>
           ))}
-          <li>
-            <GatedNavLink
-              href="/give"
-              isAuthenticated={!!user}
-              className="text-sm text-muted-foreground transition hover:text-foreground"
-            >
-              Give Now
-            </GatedNavLink>
-          </li>
         </ul>
 
         <div className="flex items-center gap-3">
@@ -64,6 +57,7 @@ export async function Navbar() {
               Sign In / Sign Up
             </GatedNavLink>
           )}
+          <MobileNav links={navLinks} isAuthenticated={!!user} />
         </div>
       </nav>
     </header>
