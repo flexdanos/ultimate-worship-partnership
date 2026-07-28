@@ -1,79 +1,84 @@
 "use server";
 
+import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { partners } from "../../../../drizzle/schema/partners";
-import { createCheckoutSession } from "@/lib/stripe/checkout";
-import { eq } from "drizzle-orm";
 import type { PartnerTier } from "@/lib/stripe/tiers";
-import { stripe } from "@/lib/stripe/client";
+
+export type BillingInterval = "monthly" | "yearly";
 
 interface CreatePartnerInput {
   firstName: string;
   lastName: string;
   email: string;
-  phone?: string;
+  phone: string;
   country: string;
   tier: PartnerTier;
-  interval: "monthly" | "yearly";
+  interval: BillingInterval;
   testimony?: string;
   prayerRequest?: string;
 }
 
-/**
- * Creates (or retrieves) a partner record in the DB, creates a Stripe customer
- * if needed, then returns a Stripe Checkout URL.
- */
-export async function createPartnerAndCheckout(
-  input: CreatePartnerInput,
-  baseUrl: string
-): Promise<string> {
-  // Check for existing partner
-  const existing = await db
+interface UpdatePartnerInput {
+  tier: PartnerTier;
+  interval: BillingInterval;
+  testimony?: string;
+  prayerRequest?: string;
+}
+
+/** Looks up a partner record by the signed-in user's account email. */
+export async function findPartnerByEmail(email: string) {
+  const [partner] = await db
     .select()
     .from(partners)
-    .where(eq(partners.email, input.email))
+    .where(eq(partners.email, email))
     .limit(1);
 
-  let partner = existing[0];
+  return partner ?? null;
+}
 
-  if (!partner) {
-    // Create Stripe customer
-    const customer = await stripe.customers.create({
+/**
+ * Creates a new partner record. There's no payment step here — becoming a
+ * partner is just a commitment/profile record; actual giving happens
+ * separately through the pledge (Give Now) flow.
+ */
+export async function createPartner(input: CreatePartnerInput) {
+  const [partner] = await db
+    .insert(partners)
+    .values({
+      firstName: input.firstName,
+      lastName: input.lastName,
       email: input.email,
-      name: `${input.firstName} ${input.lastName}`,
-      metadata: { tier: input.tier },
-    });
+      phone: input.phone,
+      country: input.country,
+      tier: input.tier,
+      interval: input.interval,
+      status: "active",
+      testimony: input.testimony,
+      prayerRequest: input.prayerRequest,
+    })
+    .returning();
 
-    // Insert partner record
-    const [inserted] = await db
-      .insert(partners)
-      .values({
-        firstName: input.firstName,
-        lastName: input.lastName,
-        email: input.email,
-        phone: input.phone,
-        country: input.country,
-        tier: input.tier,
-        status: "pending",
-        stripeCustomerId: customer.id,
-        testimony: input.testimony,
-        prayerRequest: input.prayerRequest,
-      })
-      .returning();
+  return partner;
+}
 
-    partner = inserted;
-  }
+/**
+ * Updates the editable fields of an existing partner (tier, billing
+ * interval, testimony, prayer request). Name/email/phone/country are locked
+ * once a partner record exists.
+ */
+export async function updatePartner(email: string, input: UpdatePartnerInput) {
+  const [partner] = await db
+    .update(partners)
+    .set({
+      tier: input.tier,
+      interval: input.interval,
+      testimony: input.testimony,
+      prayerRequest: input.prayerRequest,
+      updatedAt: new Date(),
+    })
+    .where(eq(partners.email, email))
+    .returning();
 
-  // Create checkout session
-  const checkoutUrl = await createCheckoutSession({
-    partnerEmail: partner.email,
-    stripeCustomerId: partner.stripeCustomerId ?? undefined,
-    tier: input.tier,
-    interval: input.interval,
-    successUrl: `${baseUrl}/thank-you?session_id={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${baseUrl}/partner-form`,
-    partnerId: partner.id,
-  });
-
-  return checkoutUrl;
+  return partner;
 }

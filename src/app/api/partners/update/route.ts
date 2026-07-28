@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/site-auth/session";
-import { createPartner, findPartnerByEmail } from "@/app/(public)/partner-form/actions";
+import { findPartnerByEmail, updatePartner } from "@/app/(public)/partner-form/actions";
 
 const schema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(1),
-  country: z.string().min(1),
   tier: z.enum(["friend_of_worship", "worship_partner", "altar_builder"]),
   interval: z.enum(["monthly", "yearly"]),
   testimony: z.string().optional(),
@@ -26,14 +21,14 @@ export async function POST(request: NextRequest) {
     const data = schema.parse(body);
 
     const existing = await findPartnerByEmail(user.email);
-    if (existing) {
+    if (!existing) {
       return NextResponse.json(
-        { error: "You've already partnered with us." },
-        { status: 409 }
+        { error: "No partnership record found for this account." },
+        { status: 404 }
       );
     }
 
-    const partner = await createPartner(data);
+    const partner = await updatePartner(user.email, data);
     return NextResponse.json({ partner });
   } catch (err) {
     if (err instanceof z.ZodError) {
@@ -42,7 +37,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.error("[POST /api/partners/create]", err);
+    console.error("[POST /api/partners/update]", err);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

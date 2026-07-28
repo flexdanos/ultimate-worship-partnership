@@ -11,5 +11,5 @@ export const BANK_TRANSFER_DETAILS = {
 export const MOBILE_MONEY_DETAILS = {
   provider: "Placeholder Mobile Money",
   accountName: "My Ultimate Worship",
-  phoneNumber: "+000 000 000 000",
+  phoneNumber: "+233243652253",
 };

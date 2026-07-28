@@ -1,6 +1,10 @@
 import Link from "next/link";
 import { TIER_LABELS, TIER_DESCRIPTIONS } from "@/lib/stripe/tiers";
 import type { PartnerTier } from "@/lib/stripe/tiers";
+import { getSessionUser } from "@/lib/site-auth/session";
+import { AuthGate } from "@/components/site-auth/auth-gate";
+
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Partnership Tiers | My Ultimate Worship",
@@ -53,7 +57,10 @@ const tiers: {
   },
 ];
 
-export default function TiersPage() {
+export default async function TiersPage() {
+  const user = await getSessionUser();
+  if (!user) return <AuthGate />;
+
   return (
     <div className="mx-auto max-w-6xl px-6 py-20">
       <div className="mb-16 text-center">
