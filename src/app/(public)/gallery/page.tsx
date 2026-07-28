@@ -2,6 +2,8 @@ import { desc } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { galleryImages } from "@/drizzle/schema/gallery";
 import { getGalleryPublicUrl } from "@/lib/storage/gallery";
+import { getSessionUser } from "@/lib/site-auth/session";
+import { AuthGate } from "@/components/site-auth/auth-gate";
 import { GalleryGrid } from "./gallery-grid";
 
 export const metadata = {
@@ -12,6 +14,9 @@ export const metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function GalleryPage() {
+  const user = await getSessionUser();
+  if (!user) return <AuthGate />;
+
   const images = await db
     .select()
     .from(galleryImages)

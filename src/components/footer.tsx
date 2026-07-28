@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { getSessionUser } from "@/lib/site-auth/session";
+import { GatedNavLink } from "@/components/site-auth/gated-nav-link";
 
-export function Footer() {
+export async function Footer() {
+  const user = await getSessionUser();
+
   return (
     <footer className="border-t bg-muted/30">
       <div className="mx-auto max-w-6xl px-6 py-12">
@@ -21,25 +25,31 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/tiers" className="transition hover:text-foreground">
+                <GatedNavLink
+                  href="/tiers"
+                  isAuthenticated={!!user}
+                  className="transition hover:text-foreground"
+                >
                   Partnership Tiers
-                </Link>
+                </GatedNavLink>
               </li>
               <li>
-                <Link
+                <GatedNavLink
                   href="/testimonies"
+                  isAuthenticated={!!user}
                   className="transition hover:text-foreground"
                 >
                   Testimonies
-                </Link>
+                </GatedNavLink>
               </li>
               <li>
-                <Link
+                <GatedNavLink
                   href="/gallery"
+                  isAuthenticated={!!user}
                   className="transition hover:text-foreground"
                 >
                   Gallery
-                </Link>
+                </GatedNavLink>
               </li>
             </ul>
           </div>
@@ -48,12 +58,13 @@ export function Footer() {
             <p className="mb-3 text-sm font-semibold">Get Involved</p>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link
+                <GatedNavLink
                   href="/partner-form"
+                  isAuthenticated={!!user}
                   className="transition hover:text-foreground"
                 >
                   Become a Partner
-                </Link>
+                </GatedNavLink>
               </li>
             </ul>
           </div>
