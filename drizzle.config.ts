@@ -1,8 +1,10 @@
 import type { Config } from "drizzle-kit";
 import { config } from "dotenv";
 
-// drizzle-kit doesn't load .env.local automatically — load it explicitly
+// drizzle-kit doesn't load Next.js's env files automatically — load them explicitly.
+// .env.local loads first so it can still override .env if ever needed.
 config({ path: ".env.local" });
+config({ path: ".env" });
 
 export default {
   schema: "./drizzle/schema/index.ts",
