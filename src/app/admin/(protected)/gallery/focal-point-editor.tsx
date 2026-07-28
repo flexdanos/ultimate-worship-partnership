@@ -94,7 +94,7 @@ export function FocalPointEditor({
       onClick={onClose}
     >
       <div
-        className="w-full max-w-2xl rounded-xl border bg-card p-6 shadow-lg"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl border bg-card p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <h2 className="mb-1 text-sm font-semibold">Adjust image crop</h2>
