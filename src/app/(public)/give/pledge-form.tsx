@@ -17,7 +17,12 @@ const inputClass =
 
 type PaymentMethod = "bank_transfer" | "mobile_money";
 
-export function PledgeForm({ defaultTier }: { defaultTier: PartnerTier }) {
+interface PledgeFormProps {
+  tier: PartnerTier;
+  defaultAmount: number;
+}
+
+export function PledgeForm({ tier, defaultAmount }: PledgeFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank_transfer");
   const [error, setError] = useState<string | null>(null);
@@ -119,6 +124,7 @@ export function PledgeForm({ defaultTier }: { defaultTier: PartnerTier }) {
             step="0.01"
             min="1"
             required
+            defaultValue={defaultAmount}
             className={inputClass}
             placeholder="50"
           />
@@ -126,15 +132,20 @@ export function PledgeForm({ defaultTier }: { defaultTier: PartnerTier }) {
 
         <div>
           <label className="mb-1 block text-sm font-medium">Partnership Tier</label>
-          <select name="tier" defaultValue={defaultTier} className={inputClass}>
-            {(Object.entries(TIER_LABELS) as [PartnerTier, string][]).map(
-              ([key, label]) => (
-                <option key={key} value={key}>
-                  {label}
-                </option>
-              )
-            )}
-          </select>
+          <input type="hidden" name="tier" value={tier} />
+          <input
+            value={TIER_LABELS[tier]}
+            disabled
+            readOnly
+            className={`${inputClass} disabled:cursor-not-allowed disabled:opacity-60`}
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            Change your tier from the{" "}
+            <Link href="/partner-form" className="underline hover:text-foreground">
+              partnership form
+            </Link>
+            .
+          </p>
         </div>
 
         <div>
