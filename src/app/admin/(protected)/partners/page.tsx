@@ -2,8 +2,8 @@ import { db } from "@/lib/db";
 import { partners } from "../../../../../drizzle/schema/partners";
 import { desc } from "drizzle-orm";
 import { formatDate } from "@/lib/utils";
-import { TIER_LABELS } from "@/lib/stripe/tiers";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { TIER_LABELS } from "@/lib/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 
 export const metadata = { title: "Partners | Admin" };
 

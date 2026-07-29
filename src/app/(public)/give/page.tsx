@@ -3,7 +3,7 @@ import { getSessionUser } from "@/lib/site-auth/session";
 import { AuthGate } from "@/components/site-auth/auth-gate";
 import { PledgeForm } from "./pledge-form";
 import { findPartnerByEmail } from "../partner-form/actions";
-import { TIER_BASE_AMOUNTS } from "@/lib/stripe/tiers";
+import { TIER_BASE_AMOUNTS } from "@/lib/tiers";
 
 export const dynamic = "force-dynamic";
 

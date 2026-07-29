@@ -3,8 +3,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { TIER_LABELS } from "@/lib/stripe/tiers";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { TIER_LABELS } from "@/lib/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 import { pledgeFormSchema } from "@/lib/pledges/schema";
 import {
   BANK_TRANSFER_DETAILS,
