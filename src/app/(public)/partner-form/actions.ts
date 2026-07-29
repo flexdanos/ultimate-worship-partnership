@@ -3,7 +3,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/lib/db";
 import { partners } from "../../../../drizzle/schema/partners";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 
 export type BillingInterval = "monthly" | "yearly";
 

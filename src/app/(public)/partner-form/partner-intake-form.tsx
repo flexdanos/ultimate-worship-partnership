@@ -6,8 +6,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useEffect, useState } from "react";
-import { TIER_LABELS } from "@/lib/stripe/tiers";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { TIER_LABELS } from "@/lib/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 import { COUNTRIES, COUNTRY_DIAL_CODES } from "@/lib/constants/countries";
 
 const schema = z.object({
