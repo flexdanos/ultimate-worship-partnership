@@ -5,8 +5,8 @@ import { pledges } from "@/drizzle/schema/pledges";
 import { siteUsers } from "@/drizzle/schema/site-users";
 import { getPledgeProofSignedUrl } from "@/lib/storage/pledge-proofs";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { TIER_LABELS } from "@/lib/stripe/tiers";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { TIER_LABELS } from "@/lib/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 import { PledgeReviewActions } from "./pledge-review-actions";
 
 export const metadata = { title: "Pledges | Admin" };

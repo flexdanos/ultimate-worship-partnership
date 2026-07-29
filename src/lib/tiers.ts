@@ -1,29 +1,12 @@
 /**
- * Maps each partner tier + billing interval to a Stripe Price ID.
+ * Partnership tier constants — labels, descriptions, and suggested give
+ * amounts shown across the tiers page, partner form, and give/pledge flow.
  *
- * Replace the placeholder values with your actual Stripe Price IDs
- * from your Stripe Dashboard (or from environment variables).
+ * Giving is currently manual (bank transfer / Mobile Money, see
+ * src/app/(public)/give), so there are no payment-processor price IDs here.
  */
 
 export type PartnerTier = "friend_of_worship" | "worship_partner" | "altar_builder";
-
-export const TIER_PRICE_IDS: Record<
-  PartnerTier,
-  { monthly: string; yearly: string }
-> = {
-  friend_of_worship: {
-    monthly: process.env.STRIPE_PRICE_FRIEND_MONTHLY ?? "price_PLACEHOLDER",
-    yearly: process.env.STRIPE_PRICE_FRIEND_YEARLY ?? "price_PLACEHOLDER",
-  },
-  worship_partner: {
-    monthly: process.env.STRIPE_PRICE_WORSHIP_MONTHLY ?? "price_PLACEHOLDER",
-    yearly: process.env.STRIPE_PRICE_WORSHIP_YEARLY ?? "price_PLACEHOLDER",
-  },
-  altar_builder: {
-    monthly: process.env.STRIPE_PRICE_ALTAR_MONTHLY ?? "price_PLACEHOLDER",
-    yearly: process.env.STRIPE_PRICE_ALTAR_YEARLY ?? "price_PLACEHOLDER",
-  },
-};
 
 export const TIER_LABELS: Record<PartnerTier, string> = {
   friend_of_worship: "Friend of Worship",
