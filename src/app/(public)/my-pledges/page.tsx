@@ -4,8 +4,8 @@ import { db } from "@/lib/db";
 import { pledges } from "@/drizzle/schema/pledges";
 import { getSessionUser } from "@/lib/site-auth/session";
 import { AuthGate } from "@/components/site-auth/auth-gate";
-import { TIER_LABELS } from "@/lib/stripe/tiers";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { TIER_LABELS } from "@/lib/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";

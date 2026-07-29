@@ -1,6 +1,6 @@
 import Link from "next/link";
-import { TIER_LABELS, TIER_DESCRIPTIONS } from "@/lib/stripe/tiers";
-import type { PartnerTier } from "@/lib/stripe/tiers";
+import { TIER_LABELS, TIER_DESCRIPTIONS } from "@/lib/tiers";
+import type { PartnerTier } from "@/lib/tiers";
 import { getSessionUser } from "@/lib/site-auth/session";
 import { AuthGate } from "@/components/site-auth/auth-gate";
 
