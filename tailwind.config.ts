@@ -56,6 +56,28 @@ const config: Config = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        float: {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-16px)" },
+        },
+        kenburns: {
+          "0%": { transform: "scale(1)" },
+          "100%": { transform: "scale(1.08)" },
+        },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(24px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+      },
+      animation: {
+        float: "float 7s ease-in-out infinite",
+        kenburns: "kenburns 22s ease-out infinite alternate",
+        "fade-up": "fade-up 0.8s cubic-bezier(0.16,1,0.3,1) both",
+      },
+      transitionTimingFunction: {
+        "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
