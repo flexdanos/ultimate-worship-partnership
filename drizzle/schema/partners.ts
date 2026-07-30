@@ -31,7 +31,9 @@ export const partners = pgTable("partners", {
   // Supabase auth link (optional — for partners who create accounts)
   supabaseUserId: uuid("supabase_user_id").unique(),
 
-  // Testimony / notes from intake form
+  // Testimony / notes from intake form — the partner's own editable draft.
+  // The moderatable, publishable copy lives in the `testimonies` table,
+  // kept in sync whenever this is saved (see partner-form/actions.ts).
   testimony: text("testimony"),
   prayerRequest: text("prayer_request"),
 
