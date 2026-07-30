@@ -6,3 +6,4 @@ export * from "./gallery";
 export * from "./site-users";
 export * from "./sessions";
 export * from "./pledges";
+export * from "./testimonies";

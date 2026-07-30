@@ -2,7 +2,6 @@ import Link from "next/link";
 import {
   Users,
   UserCheck,
-  CreditCard,
   Wallet,
   AlertCircle,
   CheckCircle2,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { partners } from "../../../../../drizzle/schema/partners";
-import { subscriptions } from "../../../../../drizzle/schema/subscriptions";
 import { paymentEvents } from "../../../../../drizzle/schema/payment-events";
 import { pledges } from "../../../../../drizzle/schema/pledges";
 import { siteUsers } from "../../../../../drizzle/schema/site-users";
@@ -33,7 +31,6 @@ async function getStats() {
   const [
     totalPartnersResult,
     activePartnersResult,
-    activeSubscriptionsResult,
     recentPaymentRevenueResult,
     recentPledgeRevenueResult,
     pendingPledgesCountResult,
@@ -44,10 +41,6 @@ async function getStats() {
       .select({ count: count() })
       .from(partners)
       .where(eq(partners.status, "active")),
-    db
-      .select({ count: count() })
-      .from(subscriptions)
-      .where(eq(subscriptions.status, "active")),
     db
       .select({ total: sql<number>`coalesce(sum(amount_cents), 0)` })
       .from(paymentEvents)
@@ -91,7 +84,6 @@ async function getStats() {
   return {
     totalPartners: totalPartnersResult[0]?.count ?? 0,
     activePartners: activePartnersResult[0]?.count ?? 0,
-    activeSubscriptions: activeSubscriptionsResult[0]?.count ?? 0,
     renewalCents,
     pledgeCents,
     recentRevenueCents: renewalCents + pledgeCents,
@@ -138,13 +130,6 @@ export default async function DashboardPage() {
       href: "/admin/partners",
     },
     {
-      label: "Active Subscriptions",
-      value: stats.activeSubscriptions.toLocaleString(),
-      description: "Live Stripe subscriptions",
-      icon: CreditCard,
-      href: "/admin/subscriptions",
-    },
-    {
       label: "Revenue (30 days)",
       value: formatCurrency(stats.recentRevenueCents),
       description:
@@ -162,11 +147,11 @@ export default async function DashboardPage() {
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Overview of partners, subscriptions, and giving.
+          Overview of partners and giving.
         </p>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((card) => (
           <Link
             key={card.label}
