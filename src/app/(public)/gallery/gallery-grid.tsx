@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Eye } from "lucide-react";
 import { ImageLightbox } from "@/components/gallery/image-lightbox";
 
@@ -40,13 +41,14 @@ export function GalleryGrid({ images }: { images: GalleryItem[] }) {
               }}
               className="group relative shrink-0 rounded-full shadow-md ring-1 ring-border transition-transform duration-500 ease-out-expo hover:z-10 hover:scale-125 hover:shadow-2xl hover:[animation-play-state:paused] motion-safe:animate-float motion-reduce:hover:scale-110"
             >
-              <span className="block h-full w-full overflow-hidden rounded-full">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+              <span className="relative block h-full w-full overflow-hidden rounded-full">
+                <Image
                   src={image.url}
                   alt={image.alt}
+                  fill
+                  sizes="176px"
                   style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
-                  className="h-full w-full object-cover transition-transform duration-500 ease-out-expo group-hover:scale-110"
+                  className="object-cover transition-transform duration-500 ease-out-expo group-hover:scale-110"
                 />
               </span>
 

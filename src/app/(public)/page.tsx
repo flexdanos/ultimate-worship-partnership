@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { desc } from "drizzle-orm";
 import { Reveal } from "@/components/reveal";
 import { db } from "@/lib/db";
@@ -36,11 +37,13 @@ export default async function HomePage() {
       {/* Hero */}
       <section className="relative flex min-h-[85vh] flex-col items-center justify-center overflow-hidden px-6 text-center text-white">
         <div className="absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={HERO_IMAGE}
             alt="The My Ultimate Worship band leading a full room in worship"
-            className="h-full w-full scale-100 object-cover motion-safe:animate-kenburns"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover motion-safe:animate-kenburns"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-slate-950/85 via-slate-900/70 to-amber-900/50" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
@@ -95,11 +98,12 @@ export default async function HomePage() {
         </Reveal>
         <Reveal delayMs={150} className="relative">
           <div className="relative mx-auto aspect-[4/5] w-full max-w-sm -rotate-2 overflow-hidden rounded-3xl shadow-2xl transition duration-500 ease-out-expo hover:rotate-0">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <Image
               src={MISSION_IMAGE}
               alt="A worship leader singing with the My Ultimate Worship band"
-              className="h-full w-full object-cover"
+              fill
+              sizes="(min-width: 1024px) 384px, 100vw"
+              className="object-cover"
             />
           </div>
         </Reveal>
@@ -108,12 +112,13 @@ export default async function HomePage() {
       {/* Partner Tiers Preview */}
       <section className="relative overflow-hidden px-6 py-24">
         <div className="absolute inset-0">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src={TIERS_TEXTURE_IMAGE}
             alt=""
             aria-hidden
-            className="h-full w-full object-cover opacity-[0.07] dark:opacity-[0.1]"
+            fill
+            sizes="100vw"
+            className="object-cover opacity-[0.07] dark:opacity-[0.1]"
           />
           <div className="absolute inset-0 bg-background/95" />
         </div>
@@ -186,14 +191,15 @@ export default async function HomePage() {
                   }}
                   className="relative aspect-square w-28 shrink-0 overflow-hidden rounded-full border-4 border-background shadow-xl transition-transform duration-500 ease-out-expo hover:z-10 hover:scale-110 motion-safe:animate-float sm:w-40"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={image.url}
                     alt={image.alt}
+                    fill
+                    sizes="160px"
                     style={{
                       objectPosition: `${image.focalX}% ${image.focalY}%`,
                     }}
-                    className="h-full w-full object-cover"
+                    className="object-cover"
                   />
                 </div>
               ))}
