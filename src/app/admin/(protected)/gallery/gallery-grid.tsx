@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { ImageLightbox } from "@/components/gallery/image-lightbox";
 import { DeleteButton } from "./delete-button";
 import { FocalPointEditor } from "./focal-point-editor";
@@ -28,14 +29,15 @@ export function AdminGalleryGrid({ images }: { images: AdminGalleryItem[] }) {
             <button
               type="button"
               onClick={() => setSelected(image)}
-              className="block h-full w-full"
+              className="relative block h-full w-full"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={image.url}
                 alt={image.alt}
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 style={{ objectPosition: `${image.focalX}% ${image.focalY}%` }}
-                className="h-full w-full object-cover"
+                className="object-cover"
               />
             </button>
             <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-black/60 px-3 py-2 opacity-0 transition group-hover:opacity-100">
