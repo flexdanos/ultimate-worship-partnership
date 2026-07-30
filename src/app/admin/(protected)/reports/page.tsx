@@ -1,7 +1,6 @@
 import { db } from "@/lib/db";
 import { paymentEvents } from "../../../../../drizzle/schema/payment-events";
 import { partners } from "../../../../../drizzle/schema/partners";
-import { subscriptions } from "../../../../../drizzle/schema/subscriptions";
 import { pledges } from "../../../../../drizzle/schema/pledges";
 import { sql, count, eq, and, gte, desc } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
