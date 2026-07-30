@@ -69,14 +69,22 @@ const config: Config = {
           "0%": { opacity: "0", transform: "translateY(24px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
+        "splash-out": {
+          "0%, 60%": { opacity: "1" },
+          "100%": { opacity: "0", visibility: "hidden" },
+        },
       },
       animation: {
         float: "float 7s ease-in-out infinite",
         kenburns: "kenburns 22s ease-out infinite alternate",
         "fade-up": "fade-up 0.8s cubic-bezier(0.16,1,0.3,1) both",
+        "splash-out": "splash-out 1.5s cubic-bezier(0.16,1,0.3,1) forwards",
       },
       transitionTimingFunction: {
         "out-expo": "cubic-bezier(0.16, 1, 0.3, 1)",
+      },
+      zIndex: {
+        splash: "60",
       },
     },
   },

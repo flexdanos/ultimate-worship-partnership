@@ -2,22 +2,37 @@ import { db } from "@/lib/db";
 import { paymentEvents } from "../../../../../drizzle/schema/payment-events";
 import { partners } from "../../../../../drizzle/schema/partners";
 import { subscriptions } from "../../../../../drizzle/schema/subscriptions";
-import { sql, count, eq, and, gte } from "drizzle-orm";
+import { pledges } from "../../../../../drizzle/schema/pledges";
+import { sql, count, eq, and, gte, desc } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Reports | Admin" };
+
+type MonthlyRow = { month: string; month_num: number; total_cents: number };
+
+type RevenueActivity = {
+  id: string;
+  label: string;
+  amountCents: number;
+  currency: string;
+  date: Date;
+  detail: string;
+};
 
 async function getReportData() {
   const currentYear = new Date().getFullYear();
   const yearStart = new Date(`${currentYear}-01-01`);
 
   const [
-    annualRevenueResult,
-    monthlyBreakdown,
+    annualPaymentRevenueResult,
+    annualPledgeRevenueResult,
+    paymentMonthlyBreakdown,
+    pledgeMonthlyBreakdown,
     tierBreakdown,
     recentEvents,
+    recentVerifiedPledges,
   ] = await Promise.all([
-    // Annual revenue total
+    // Annual revenue total from Stripe renewals
     db
       .select({ total: sql<number>`coalesce(sum(amount_cents), 0)` })
       .from(paymentEvents)
@@ -28,8 +43,16 @@ async function getReportData() {
         )
       ),
 
-    // Revenue by month (current year)
-    db.execute<{ month: string; total_cents: number }>(sql`
+    // Annual revenue total from admin-verified pledges
+    db
+      .select({ total: sql<number>`coalesce(sum(amount_cents), 0)` })
+      .from(pledges)
+      .where(
+        and(eq(pledges.status, "verified"), gte(pledges.reviewedAt, yearStart))
+      ),
+
+    // Renewal revenue by month (current year)
+    db.execute<MonthlyRow>(sql`
       SELECT
         to_char(occurred_at, 'Month') AS month,
         EXTRACT(MONTH FROM occurred_at) AS month_num,
@@ -37,6 +60,19 @@ async function getReportData() {
       FROM payment_events
       WHERE event_type = 'renewal_succeeded'
         AND EXTRACT(YEAR FROM occurred_at) = ${currentYear}
+      GROUP BY month, month_num
+      ORDER BY month_num
+    `),
+
+    // Verified pledge revenue by month (current year)
+    db.execute<MonthlyRow>(sql`
+      SELECT
+        to_char(reviewed_at, 'Month') AS month,
+        EXTRACT(MONTH FROM reviewed_at) AS month_num,
+        coalesce(sum(amount_cents), 0) AS total_cents
+      FROM pledges
+      WHERE status = 'verified'
+        AND EXTRACT(YEAR FROM reviewed_at) = ${currentYear}
       GROUP BY month, month_num
       ORDER BY month_num
     `),
@@ -57,16 +93,57 @@ async function getReportData() {
       .from(paymentEvents)
       .orderBy(sql`occurred_at DESC`)
       .limit(10),
+
+    // Recent admin-verified pledges
+    db
+      .select()
+      .from(pledges)
+      .where(eq(pledges.status, "verified"))
+      .orderBy(desc(pledges.reviewedAt))
+      .limit(10),
   ]);
 
+  const monthlyTotals = new Map<number, { month: string; total_cents: number }>();
+  for (const row of [...paymentMonthlyBreakdown, ...pledgeMonthlyBreakdown]) {
+    const key = Number(row.month_num);
+    const existing = monthlyTotals.get(key);
+    monthlyTotals.set(key, {
+      month: row.month,
+      total_cents: (existing?.total_cents ?? 0) + Number(row.total_cents),
+    });
+  }
+  const monthlyBreakdown = Array.from(monthlyTotals.entries())
+    .sort(([a], [b]) => a - b)
+    .map(([, value]) => value);
+
+  const activity: RevenueActivity[] = [
+    ...recentEvents.map((ev) => ({
+      id: ev.id,
+      label: ev.eventType.replace(/_/g, " "),
+      amountCents: ev.amountCents ?? 0,
+      currency: ev.currency ?? "usd",
+      date: ev.occurredAt,
+      detail: `${ev.stripeEventId.slice(0, 24)}…`,
+    })),
+    ...recentVerifiedPledges.map((pledge) => ({
+      id: pledge.id,
+      label: "verified pledge",
+      amountCents: pledge.amountCents,
+      currency: pledge.currency,
+      date: pledge.reviewedAt ?? pledge.updatedAt,
+      detail: pledge.transactionReference ?? "—",
+    })),
+  ]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .slice(0, 10);
+
   return {
-    annualRevenueCents: Number(annualRevenueResult[0]?.total ?? 0),
-    monthlyBreakdown: monthlyBreakdown as {
-      month: string;
-      total_cents: number;
-    }[],
+    annualRevenueCents:
+      Number(annualPaymentRevenueResult[0]?.total ?? 0) +
+      Number(annualPledgeRevenueResult[0]?.total ?? 0),
+    monthlyBreakdown,
     tierBreakdown,
-    recentEvents,
+    activity,
   };
 }
 
@@ -156,10 +233,10 @@ export default async function ReportsPage() {
         </div>
       </div>
 
-      {/* Recent payment events */}
+      {/* Recent revenue activity */}
       <div className="rounded-xl border bg-card shadow-sm">
         <div className="border-b px-6 py-4">
-          <h2 className="font-semibold">Recent Payment Events</h2>
+          <h2 className="font-semibold">Recent Revenue Activity</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -168,33 +245,29 @@ export default async function ReportsPage() {
                 <th className="px-4 py-3 text-left font-medium">Type</th>
                 <th className="px-4 py-3 text-left font-medium">Amount</th>
                 <th className="px-4 py-3 text-left font-medium">Date</th>
-                <th className="px-4 py-3 text-left font-medium">Stripe Event</th>
+                <th className="px-4 py-3 text-left font-medium">Reference</th>
               </tr>
             </thead>
             <tbody>
-              {data.recentEvents.length === 0 ? (
+              {data.activity.length === 0 ? (
                 <tr>
                   <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
-                    No events yet.
+                    No revenue activity yet.
                   </td>
                 </tr>
               ) : (
-                data.recentEvents.map((ev) => (
-                  <tr key={ev.id} className="border-b last:border-0">
-                    <td className="px-4 py-3 capitalize">
-                      {ev.eventType.replace(/_/g, " ")}
-                    </td>
+                data.activity.map((row) => (
+                  <tr key={row.id} className="border-b last:border-0">
+                    <td className="px-4 py-3 capitalize">{row.label}</td>
                     <td className="px-4 py-3">
-                      {ev.amountCents
-                        ? formatCurrency(ev.amountCents, ev.currency ?? "usd")
-                        : "—"}
+                      {formatCurrency(row.amountCents, row.currency)}
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">
-                      {formatDate(ev.occurredAt)}
+                      {formatDate(row.date)}
                     </td>
                     <td className="px-4 py-3">
                       <span className="font-mono text-xs text-muted-foreground">
-                        {ev.stripeEventId.slice(0, 24)}…
+                        {row.detail}
                       </span>
                     </td>
                   </tr>
