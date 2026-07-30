@@ -6,20 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/auth/client";
 import { cn } from "@/lib/utils";
-
-const navItems = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: "◈" },
-  { href: "/admin/partners", label: "Partners", icon: "👥" },
-  { href: "/admin/subscriptions", label: "Subscriptions", icon: "💳" },
-  { href: "/admin/pledges", label: "Pledges", icon: "🧾" },
-  {
-    href: "/admin/testimonies-moderation",
-    label: "Testimonies",
-    icon: "💬",
-  },
-  { href: "/admin/gallery", label: "Gallery", icon: "🖼️" },
-  { href: "/admin/reports", label: "Reports", icon: "📊" },
-];
+import { navItems, isNavItemActive } from "./nav-items";
 
 export function AdminSidebar() {
   const [open, setOpen] = useState(false);
@@ -56,10 +43,7 @@ export function AdminSidebar() {
         <nav className="flex-1 overflow-y-auto px-3 py-4">
           <ul className="space-y-1">
             {navItems.map((item) => {
-              const isActive =
-                pathname === item.href ||
-                (item.href !== "/admin/dashboard" &&
-                  pathname.startsWith(item.href));
+              const isActive = isNavItemActive(pathname, item.href);
               return (
                 <li key={item.href}>
                   <Link
