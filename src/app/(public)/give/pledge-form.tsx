@@ -7,7 +7,8 @@ import { TIER_LABELS } from "@/lib/tiers";
 import type { PartnerTier } from "@/lib/tiers";
 import { pledgeFormSchema } from "@/lib/pledges/schema";
 import {
-  BANK_TRANSFER_DETAILS,
+  ZELLE_DETAILS,
+  CASH_APP_DETAILS,
   MOBILE_MONEY_DETAILS,
 } from "@/lib/pledges/payment-details";
 import { AuthTabs } from "@/components/site-auth/auth-tabs";
@@ -15,7 +16,7 @@ import { AuthTabs } from "@/components/site-auth/auth-tabs";
 const inputClass =
   "w-full rounded-lg border bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-ring";
 
-type PaymentMethod = "bank_transfer" | "mobile_money";
+type PaymentMethod = "zelle" | "cash_app" | "mobile_money";
 
 interface PledgeFormProps {
   tier: PartnerTier;
@@ -24,7 +25,7 @@ interface PledgeFormProps {
 
 export function PledgeForm({ tier, defaultAmount }: PledgeFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bank_transfer");
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("zelle");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(null);
@@ -153,7 +154,8 @@ export function PledgeForm({ tier, defaultAmount }: PledgeFormProps) {
           <div className="flex gap-4">
             {(
               [
-                { value: "bank_transfer", label: "Bank Transfer" },
+                { value: "zelle", label: "Zelle" },
+                { value: "cash_app", label: "Cash App" },
                 { value: "mobile_money", label: "Mobile Money" },
               ] as const
             ).map((option) => (
@@ -174,19 +176,30 @@ export function PledgeForm({ tier, defaultAmount }: PledgeFormProps) {
             ))}
           </div>
 
-          {paymentMethod === "bank_transfer" ? (
+          {paymentMethod === "zelle" ? (
             <div className="mt-3 rounded-lg border bg-muted/40 p-4 text-sm">
               <p>
-                <span className="text-muted-foreground">Bank:</span>{" "}
-                {BANK_TRANSFER_DETAILS.bankName}
+                <span className="text-muted-foreground">Recipient name:</span>{" "}
+                {ZELLE_DETAILS.recipientName}
+              </p>
+              <p>
+                <span className="text-muted-foreground">Phone number:</span>{" "}
+                {ZELLE_DETAILS.phoneNumber}
+              </p>
+            </div>
+          ) : paymentMethod === "cash_app" ? (
+            <div className="mt-3 rounded-lg border bg-muted/40 p-4 text-sm">
+              <p>
+                <span className="text-muted-foreground">Cashtag:</span>{" "}
+                {CASH_APP_DETAILS.cashtag}
               </p>
               <p>
                 <span className="text-muted-foreground">Account name:</span>{" "}
-                {BANK_TRANSFER_DETAILS.accountName}
+                {CASH_APP_DETAILS.accountName}
               </p>
               <p>
-                <span className="text-muted-foreground">Account number:</span>{" "}
-                {BANK_TRANSFER_DETAILS.accountNumber}
+                <span className="text-muted-foreground">Phone number:</span>{" "}
+                {CASH_APP_DETAILS.phoneNumber}
               </p>
             </div>
           ) : (

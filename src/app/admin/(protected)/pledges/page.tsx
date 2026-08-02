@@ -2,16 +2,24 @@ import Link from "next/link";
 import { count, desc, eq } from "drizzle-orm";
 import {
   Banknote,
-  Building2,
+  CircleDollarSign,
   Inbox,
   Paperclip,
+  Send,
   Smartphone,
 } from "lucide-react";
 import { db } from "@/lib/db";
 import { pledges } from "@/drizzle/schema/pledges";
 import { siteUsers } from "@/drizzle/schema/site-users";
 import { getPledgeProofSignedUrl } from "@/lib/storage/pledge-proofs";
+import { PAYMENT_METHOD_LABELS } from "@/lib/pledges/payment-details";
 import { cn, formatCurrency, formatDate } from "@/lib/utils";
+
+const PAYMENT_METHOD_ICONS = {
+  zelle: Send,
+  cash_app: CircleDollarSign,
+  mobile_money: Smartphone,
+} as const;
 import { TIER_LABELS } from "@/lib/tiers";
 import type { PartnerTier } from "@/lib/tiers";
 import { PledgeReviewActions } from "./pledge-review-actions";
@@ -78,7 +86,7 @@ export default async function AdminPledgesPage({
       <div className="mb-8">
         <h1 className="text-2xl font-bold">Pledges</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Review manual bank transfer / Mobile Money pledges and mark them
+          Review manual Zelle / Cash App / Mobile Money pledges and mark them
           verified once payment is confirmed.
         </p>
       </div>
@@ -126,10 +134,13 @@ export default async function AdminPledgesPage({
               {
                 label: "Method",
                 value:
-                  row.paymentMethod === "bank_transfer"
-                    ? "Bank Transfer"
-                    : "Mobile Money",
-                icon: row.paymentMethod === "bank_transfer" ? Building2 : Smartphone,
+                  PAYMENT_METHOD_LABELS[
+                    row.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS
+                  ],
+                icon:
+                  PAYMENT_METHOD_ICONS[
+                    row.paymentMethod as keyof typeof PAYMENT_METHOD_ICONS
+                  ],
               },
               row.transactionReference
                 ? { label: "Reference", value: row.transactionReference }

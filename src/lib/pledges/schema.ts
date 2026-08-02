@@ -4,7 +4,7 @@ export const pledgeFormSchema = z
   .object({
     amount: z.coerce.number().positive("Enter an amount greater than 0"),
     tier: z.enum(["friend_of_worship", "worship_partner", "altar_builder"]),
-    paymentMethod: z.enum(["bank_transfer", "mobile_money"]),
+    paymentMethod: z.enum(["zelle", "cash_app", "mobile_money"]),
     transactionReference: z.string().nullish(),
     payerPhone: z.string().nullish(),
     note: z.string().nullish(),

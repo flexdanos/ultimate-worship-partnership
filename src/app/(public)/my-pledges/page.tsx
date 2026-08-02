@@ -6,6 +6,7 @@ import { getSessionUser } from "@/lib/site-auth/session";
 import { AuthGate } from "@/components/site-auth/auth-gate";
 import { TIER_LABELS } from "@/lib/tiers";
 import type { PartnerTier } from "@/lib/tiers";
+import { PAYMENT_METHOD_LABELS } from "@/lib/pledges/payment-details";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -61,9 +62,11 @@ export default async function MyPledgesPage() {
                     {TIER_LABELS[pledge.tier as PartnerTier]}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    {pledge.paymentMethod === "bank_transfer"
-                      ? "Bank Transfer"
-                      : "Mobile Money"}{" "}
+                    {
+                      PAYMENT_METHOD_LABELS[
+                        pledge.paymentMethod as keyof typeof PAYMENT_METHOD_LABELS
+                      ]
+                    }{" "}
                     · Submitted {formatDate(pledge.createdAt)}
                   </p>
                   {pledge.transactionReference && (
