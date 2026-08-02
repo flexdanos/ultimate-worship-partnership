@@ -10,7 +10,8 @@ import { siteUsers } from "./site-users";
 import { partnerTierEnum } from "./partners";
 
 export const pledgePaymentMethodEnum = pgEnum("pledge_payment_method", [
-  "bank_transfer",
+  "zelle",
+  "cash_app",
   "mobile_money",
 ]);
 
@@ -21,9 +22,9 @@ export const pledgeStatusEnum = pgEnum("pledge_status", [
 ]);
 
 /**
- * A manually-paid gift (bank transfer / Mobile Money) recorded by a signed-in
- * site user while the Stripe merchant account isn't fully live. Starts
- * "pending" and is reviewed by an admin in /admin/pledges.
+ * A manually-paid gift (Zelle / Cash App / Mobile Money) recorded by a
+ * signed-in site user while the Stripe merchant account isn't fully live.
+ * Starts "pending" and is reviewed by an admin in /admin/pledges.
  */
 export const pledges = pgTable("pledges", {
   id: uuid("id").primaryKey().defaultRandom(),

@@ -50,7 +50,7 @@ async function getStats() {
           gte(paymentEvents.occurredAt, thirtyDaysAgo)
         )
       ),
-    // Admin-verified pledges (bank transfer / Mobile Money) count as recognized revenue too
+    // Admin-verified pledges (Zelle / Cash App / Mobile Money) count as recognized revenue too
     db
       .select({ total: sql<number>`coalesce(sum(amount_cents), 0)` })
       .from(pledges)
