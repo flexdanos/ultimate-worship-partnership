@@ -10,7 +10,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "Give | My Ultimate Worship",
   description:
-    "Record a bank transfer or Mobile Money pledge while our online payment setup is finalized.",
+    "Record a Zelle, Cash App, or Mobile Money pledge while our online payment setup is finalized.",
 };
 
 export default async function GivePage() {
@@ -44,8 +44,8 @@ export default async function GivePage() {
       <div className="mb-10 text-center">
         <h1 className="mb-3 text-3xl font-bold">Give</h1>
         <p className="text-muted-foreground">
-          Pay directly by bank transfer or Mobile Money, then record your pledge
-          below. Our team will verify it and mark it as received.
+          Pay directly by Zelle, Cash App, or Mobile Money, then record your
+          pledge below. Our team will verify it and mark it as received.
         </p>
       </div>
       <PledgeForm tier={partner.tier} defaultAmount={defaultAmount} />
