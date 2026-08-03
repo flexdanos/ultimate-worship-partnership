@@ -4,6 +4,8 @@ import { partners } from "../../../../../drizzle/schema/partners";
 import { pledges } from "../../../../../drizzle/schema/pledges";
 import { sql, count, eq, and, gte, desc } from "drizzle-orm";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { MonthlyRevenueChart } from "./monthly-revenue-chart";
+import { PartnersTierChart } from "./partners-tier-chart";
 
 export const metadata = { title: "Reports | Admin" };
 
@@ -175,6 +177,9 @@ export default async function ReportsPage() {
         <div className="border-b px-6 py-4">
           <h2 className="font-semibold">Monthly Revenue</h2>
         </div>
+        <div className="px-6 pt-6">
+          <MonthlyRevenueChart data={data.monthlyBreakdown} />
+        </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -209,6 +214,9 @@ export default async function ReportsPage() {
       <div className="rounded-xl border bg-card shadow-sm">
         <div className="border-b px-6 py-4">
           <h2 className="font-semibold">Active Partners by Tier</h2>
+        </div>
+        <div className="px-6 pt-6">
+          <PartnersTierChart data={data.tierBreakdown} />
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">

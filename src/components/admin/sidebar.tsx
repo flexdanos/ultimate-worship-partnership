@@ -80,7 +80,7 @@ export function AdminSidebar() {
   return (
     <>
       {/* Mobile top bar */}
-      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3 text-white lg:hidden">
+      <div className="flex shrink-0 items-center justify-between border-b border-slate-800 bg-slate-950 px-4 py-3 text-white lg:hidden">
         <p className="text-sm font-bold leading-tight">My Ultimate Worship</p>
         <button
           type="button"

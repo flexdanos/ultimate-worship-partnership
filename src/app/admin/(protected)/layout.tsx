@@ -10,11 +10,13 @@ export default async function AdminLayout({
   const user = await requireAdmin();
 
   return (
-    <div className="flex min-h-screen flex-col lg:flex-row">
+    <div className="flex h-screen flex-col overflow-hidden lg:flex-row">
       <AdminSidebar />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <AdminTopbar email={user?.email ?? "Admin"} />
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">{children}</main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+          {children}
+        </main>
       </div>
     </div>
   );
